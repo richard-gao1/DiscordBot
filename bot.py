@@ -28,8 +28,6 @@ def run_discord_bot():
         print(f'Synced commands for {bot.user}.')
 
     @bot.command()
-    @app_commands.guilds(discord.Object(id = 847141350847545415))
-    # change ID to whatever server ID you want to sync to, leave out decorator if you want it to globally sync (will take around 1-24 hours to sync)
     async def poll(ctx, question: str, *args: str):
         '''
         Creates a poll on discord, with the first argument being the question asked, and the following arguments being the choices for the poll
@@ -42,5 +40,14 @@ def run_discord_bot():
         for choice in args:
             await ctx.send(choice)
 
+    @bot.command()
+    async def choose(ctx, *choices: str):
+        """
+        Randomly chooses between multiple choice
+        :param ctx: the character that denotes a command for this bot (?)
+        :param choices: a list of choices to choose between
+        :return: one of the choices
+        """
+        await ctx.send(random.choice(choices))
 
     bot.run(TOKEN)
