@@ -53,15 +53,20 @@ def run_discord_bot():
         """
         await ctx.send(random.choice(choices))
 
-
     @bot.command()
-    async def test(ctx):
+    async def dropdown(ctx, message, *args):
         """Playing around with UI stuff"""
-        await ctx.send('testing UI stuff')
+        view = discord.ui.View()
 
-        view = graphics.DropdownView()
+        # create the options for the dropdown
+        options = []
+        for arg in args:
+            options.append(discord.SelectOption(label=arg))
+        drop = discord.ui.Select(placeholder=message, min_values=1, max_values=1, options=options)
+
+        view.add_item(drop)
 
         # Sending a message containing our view
-        await ctx.send('Pick your favourite colour:', view=view)
+        await ctx.send(message, view=view)
 
     bot.run(TOKEN)
