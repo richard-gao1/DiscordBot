@@ -1,15 +1,9 @@
 import discord
 import random
 
-from discord import app_commands
 from discord.ext import commands
-import responses
+import graphics
 
-async def send_message(message, user_message):
-    try:
-        response = responses.handle_responses(user_message)
-    except Exception as e:
-        print(e)
 
 def run_discord_bot():
     TOKEN = 'MTExMDMzNjM5MTMzMTcyMTIyNg.GSLet1.X4C6hozQO9IQK4NZ0Amu4OB1JZhn7zqFoJJf24'
@@ -25,6 +19,15 @@ def run_discord_bot():
         # note that auto syncing is bad (you get ratelimited to twice per minute
         await bot.tree.sync(guild=discord.Object(id=847141350847545415))
         # remove guild specification if you want to sync globally
+        print(f'Synced commands for {bot.user}.')
+
+
+    @bot.command()
+    async def sync(ctx):
+        # note that auto syncing is bad (you get ratelimited to twice per minute
+        await bot.tree.sync(guild=discord.Object(id=847141350847545415))
+        # remove guild specification if you want to sync globally
+        # note that syncing may take a couple of minutes
         print(f'Synced commands for {bot.user}.')
 
     @bot.command()
@@ -49,5 +52,16 @@ def run_discord_bot():
         :return: one of the choices
         """
         await ctx.send(random.choice(choices))
+
+
+    @bot.command()
+    async def test(ctx):
+        """Playing around with UI stuff"""
+        await ctx.send('testing UI stuff')
+
+        view = graphics.DropdownView()
+
+        # Sending a message containing our view
+        await ctx.send('Pick your favourite colour:', view=view)
 
     bot.run(TOKEN)
