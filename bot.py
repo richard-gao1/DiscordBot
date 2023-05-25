@@ -58,12 +58,31 @@ def run_discord_bot():
         """Playing around with UI stuff"""
         view = discord.ui.View()
 
-        # create the options for the dropdown
-        options = []
-        for arg in args:
-            options.append(discord.SelectOption(label=arg))
-        drop = discord.ui.Select(placeholder=message, min_values=1, max_values=1, options=options)
+        # Defines a custom Select containing colour options
+        # that the user can choose. The callback function
+        # of this class is called when the user changes their choice
+        class Dropdown(discord.ui.Select):
+            def __init__(self):
+                # create the options for the dropdown
+                options = []
+                for arg in args:
+                    options.append(discord.SelectOption(label=arg))
 
+                # The placeholder is what will be shown when no option is chosen
+                # The min and max values indicate we can only pick one of the three options
+                # The options parameter defines the dropdown options. We defined this above
+                super().__init__(placeholder=message, min_values=1, max_values=1,
+                                 options=options)
+
+            async def callback(self, interaction: discord.Interaction):
+                # Use the interaction object to send a response message containing
+                # the user's favourite colour or choice. The self object refers to the
+                # Select object, and the values attribute gets a list of the user's
+                # selected options. We only want the first one.
+                await interaction.response.send_message(f'Your choice is {self.values[0]}')
+
+
+        drop = Dropdown()
         view.add_item(drop)
 
         # Sending a message containing our view
