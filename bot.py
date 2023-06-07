@@ -6,7 +6,7 @@ import graphics
 
 
 def run_discord_bot():
-    TOKEN = 'MTExMDMzNjM5MTMzMTcyMTIyNg.GSLet1.X4C6hozQO9IQK4NZ0Amu4OB1JZhn7zqFoJJf24'
+    TOKEN = 'MTExMDMzNjM5MTMzMTcyMTIyNg.GZEynf.TIjj6TOGU7kDLGZGI-71y7_s0QJsQ7NfZ8q3kE'
     intent = discord.Intents.default()
     intent.message_content = True
 
@@ -39,9 +39,28 @@ def run_discord_bot():
         :param args: an arbitrary amount of choices to poll
         :return: None
         '''
-        await ctx.send(question + ' Please react with the thumbs up emoji to vote on your choice!')
+
+        # defines buttons to use in the poll
+        class PollButton(discord.ui.Button):
+
+            message = ''
+
+            def __init__(self, message):
+                super().__init__(label=message, style=discord.ButtonStyle.primary)
+                self.message = message
+
+            # defines the behavior after a user clicks a poll button (returns user choice and increments poll)
+            async def callback(self, interaction: discord.Interaction):
+                # Use the interaction object to send a response message containing
+                # the user's choice and increment the poll
+                self.disabled = True
+                self.style = discord.ButtonStyle.grey
+                await interaction.response.send_message(f'Your choice is {self.message}')
+
+        view = discord.ui.View()
         for choice in args:
-            await ctx.send(choice)
+            view.add_item(PollButton(choice))
+        await ctx.send(question, view=view)
 
     @bot.command()
     async def choose(ctx, *choices: str):
