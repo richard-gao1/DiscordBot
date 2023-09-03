@@ -3,7 +3,7 @@ import random
 
 from discord.ext import commands
 import graphics
-
+from poll import *
 
 def run_discord_bot():
     TOKEN = 'MTExMDMzNjM5MTMzMTcyMTIyNg.GZEynf.TIjj6TOGU7kDLGZGI-71y7_s0QJsQ7NfZ8q3kE'
@@ -31,35 +31,16 @@ def run_discord_bot():
         print(f'Synced commands for {bot.user}.')
 
     @bot.command()
-    async def poll(ctx, question: str, *args: str):
+    async def poll(ctx, mins, question: str, *args: str):
         '''
         Creates a poll on discord, with the first argument being the question asked, and the following arguments being the choices for the poll
         :param ctx: the character that denotes a command for this bot (?)
         :param question: the question that is being polled
         :param args: an arbitrary amount of choices to poll
+        :param mins: the number of minutes before the poll closes
         :return: None
         '''
-
-        # defines buttons to use in the poll
-        class PollButton(discord.ui.Button):
-
-            message = ''
-
-            def __init__(self, message):
-                super().__init__(label=message, style=discord.ButtonStyle.primary)
-                self.message = message
-
-            # defines the behavior after a user clicks a poll button (returns user choice and increments poll)
-            async def callback(self, interaction: discord.Interaction):
-                # Use the interaction object to send a response message containing
-                # the user's choice and increment the poll
-                self.disabled = True
-                self.style = discord.ButtonStyle.grey
-                await interaction.response.send_message(f'Your choice is {self.message}')
-
-        view = discord.ui.View()
-        for choice in args:
-            view.add_item(PollButton(choice))
+        view = Poll(ctx, question, args, int(mins) * 60)
         await ctx.send(question, view=view)
 
     @bot.command()
